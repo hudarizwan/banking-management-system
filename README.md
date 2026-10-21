@@ -9,21 +9,9 @@
 
 A full-fledged, dual-platform **Banking Management System** engineered with both a **Legacy Java Swing Desktop Client** and a modernized **Fintech Web Application** powered by a native **Node.js REST API** and a shared **SQLite** database.
 
----
+## 📖 Overview
 
-## 📌 Repository Naming & Description Suggestions
-
-### 🏷️ Recommended Repository Names:
-1. **`apex-banking-management-system`** *(Recommended — professional, clear, portfolio-ready)*
-2. **`modern-bank-management-system`** *(Great for academic & coursework submissions)*
-3. **`fullstack-banking-platform`** *(Highlights both the desktop & web architectures)*
-4. **`fintech-bank-portal-sqlite`** *(SEO-friendly, specifies tech stack)*
-
-### 📝 Recommended GitHub Descriptions:
-> *"A full-featured Banking Management System featuring a modern luxury dark-mode web portal and a classic Java Swing desktop client, backed by an ACID-compliant SQLite ledger with real-time fund transfers, transaction auditing, and PIN recovery."*
-
-*(Short version for 1-line bio:)*
-> *"Modern Fullstack & Java Swing Banking Management System with SQLite database, real-time P2P transfers, transaction ledger & PIN recovery."*
+**Apex Bank** is a comprehensive banking management platform that bridges classic desktop software with modern web architecture. Built around a shared ACID-compliant SQLite database, it provides customer account lifecycle management, real-time peer-to-peer fund transfers, automated ledger auditing with balance tracking, virtual debit card visualization, and secure PIN recovery.
 
 ---
 
