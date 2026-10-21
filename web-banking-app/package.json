@@ -1,0 +1,12 @@
+{
+  "name": "apex-bank-web-app",
+  "version": "1.0.0",
+  "description": "Modern Fullstack Banking Management System with SQLite integration",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["banking", "sqlite", "fintech", "dashboard"],
+  "author": "",
+  "license": "ISC"
+}

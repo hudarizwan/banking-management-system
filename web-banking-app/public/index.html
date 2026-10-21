@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Next-Gen Online Banking Management System with real-time transactions, account transfers, statement logs, and security recovery.">
+  <title>Apex Bank • Modern Banking Management System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏦</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar" id="main-nav">
+    <a href="#" class="brand" id="brand-link">
+      <div class="brand-icon">🏦</div>
+      <span>APEX BANK</span>
+    </a>
+    <div class="nav-actions">
+      <div class="live-badge" title="Directly synchronized with bank.sqlite">
+        <span class="pulse-dot"></span>
+        <span>SQLite Synced</span>
+      </div>
+      <div id="user-nav-section" style="display: none;">
+        <div class="user-badge" id="user-badge">
+          <div class="user-avatar" id="nav-avatar">U</div>
+          <span id="nav-user-name">User</span>
+        </div>
+        <button class="btn btn-outline btn-sm" id="btn-profile" title="View Profile & Security" style="margin-left: 0.5rem;">⚙️ Settings</button>
+        <button class="btn btn-danger btn-sm" id="btn-logout" title="Sign Out" style="margin-left: 0.5rem;">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="app-container">
+
+    <!-- ==========================================
+         VIEW 1: AUTHENTICATION SCREEN
+         ========================================== -->
+    <section id="view-auth" class="auth-wrapper">
+      <div class="auth-card">
+        
+        <div class="auth-header">
+          <h1>Welcome to Apex Bank</h1>
+          <p id="auth-subtitle">Secure, fast, and modern banking management</p>
+        </div>
+
+
+        <!-- Auth Tabs: Login vs Register -->
+        <div class="auth-tabs" role="tablist">
+          <button class="auth-tab active" id="tab-login" role="tab" aria-selected="true">Sign In</button>
+          <button class="auth-tab" id="tab-register" role="tab" aria-selected="false">Create Account</button>
+        </div>
+
+        <!-- Form 1: Sign In -->
+        <form id="form-login">
+          <div class="form-group">
+            <label class="form-label" for="login-acc">Account Number</label>
+            <div class="input-with-icon">
+              <span class="input-icon">💳</span>
+              <input type="number" id="login-acc" class="form-control" placeholder="e.g. 210, 1572, 3045" required autocomplete="username">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="login-pin">Security PIN</label>
+            <div class="input-with-icon">
+              <span class="input-icon">🔒</span>
+              <input type="password" id="login-pin" class="form-control" placeholder="Enter your secret PIN" required autocomplete="current-password">
+              <button type="button" class="input-action" id="toggle-pin-visibility" title="Show/Hide PIN">👁️</button>
+            </div>
+          </div>
+
+          <div class="auth-links">
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--text-secondary); cursor: pointer;">
+              <input type="checkbox" id="remember-me" checked> Remember Account
+            </label>
+            <a class="auth-link" id="link-forgot-pin">Forgot PIN?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="btn-submit-login">
+            <span>Sign In to Dashboard</span>
+            <span>→</span>
+          </button>
+        </form>
+
+        <!-- Form 2: Register New Account -->
+        <form id="form-register" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="reg-name">Full Name</label>
+            <div class="input-with-icon">
+              <span class="input-icon">👤</span>
+              <input type="text" id="reg-name" class="form-control" placeholder="e.g. Alexander Vance" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="reg-pin">Choose PIN (Numeric)</label>
+              <div class="input-with-icon">
+                <span class="input-icon">🔒</span>
+                <input type="number" id="reg-pin" class="form-control" placeholder="e.g. 1234" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-type">Account Type</label>
+              <select id="reg-type" class="form-control no-icon">
+                <option value="Savings">Savings Account</option>
+                <option value="Current">Current Account</option>
+                <option value="Premium">Premium VIP</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="reg-mob">Mobile Number</label>
+              <input type="tel" id="reg-mob" class="form-control no-icon" placeholder="Phone number" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reg-deposit">Initial Deposit ($)</label>
+              <input type="number" id="reg-deposit" class="form-control no-icon" value="1000" min="50" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-address">Address</label>
+            <input type="text" id="reg-address" class="form-control no-icon" placeholder="Residential Address" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-sec-q">Security Question (For PIN Recovery)</label>
+            <select id="reg-sec-q" class="form-control no-icon">
+              <option value="What is the name of your first pet?">What is the name of your first pet?</option>
+              <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+              <option value="In what city were you born?">In what city were you born?</option>
+              <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reg-sec-a">Security Answer</label>
+            <input type="text" id="reg-sec-a" class="form-control no-icon" placeholder="Your secret answer" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" id="btn-submit-register">
+            <span>Open Account & Deposit</span>
+            <span>→</span>
+          </button>
+        </form>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         VIEW 2: MAIN BANKING DASHBOARD
+         ========================================== -->
+    <section id="view-dashboard" style="display: none;">
+      
+      <!-- Top Row: Debit Card & Quick Actions -->
+      <div class="dashboard-grid">
+        
+        <!-- Emulated Debit Card -->
+        <div class="debit-card" id="user-card" aria-label="Virtual Debit Card">
+          <div class="card-top">
+            <div class="card-bank-name">
+              <span>🏛️</span>
+              <span>APEX PLATINUM</span>
+            </div>
+            <span class="card-type-tag" id="card-acc-type">SAVINGS</span>
+          </div>
+
+          <div class="card-chip-nfc">
+            <div class="chip"></div>
+            <span style="font-size: 1.1rem; opacity: 0.85;" title="Contactless Enabled">📶</span>
+          </div>
+
+          <div class="card-balance-section">
+            <div class="card-balance-label">Available Balance</div>
+            <div class="card-balance-amount balance-val" id="card-balance-display">$0.00</div>
+          </div>
+
+          <div class="card-bottom">
+            <div>
+              <div class="card-holder" id="card-holder-name">CUSTOMER NAME</div>
+              <div style="font-size: 0.65rem; color: rgba(255,255,255,0.7);">EXP 10/30</div>
+            </div>
+            <div class="card-acc-num" id="card-acc-display">ACC •••• ----</div>
+          </div>
+        </div>
+
+        <!-- Quick Actions Panel -->
+        <div class="quick-actions-panel">
+          <div class="panel-header">
+            <h2 class="panel-title">Quick Financial Operations</h2>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">Instant Real-Time</span>
+          </div>
+
+          <div class="actions-grid">
+            <div class="action-tile" id="btn-action-deposit" role="button" tabindex="0">
+              <div class="action-icon deposit">📥</div>
+              <span class="action-label">Deposit</span>
+            </div>
+
+            <div class="action-tile" id="btn-action-withdraw" role="button" tabindex="0">
+              <div class="action-icon withdraw">📤</div>
+              <span class="action-label">Withdraw</span>
+            </div>
+
+            <div class="action-tile" id="btn-action-transfer" role="button" tabindex="0">
+              <div class="action-icon transfer">🔄</div>
+              <span class="action-label">Transfer</span>
+            </div>
+
+            <div class="action-tile" id="btn-action-export" role="button" tabindex="0">
+              <div class="action-icon statement">📄</div>
+              <span class="action-label">Statement</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Financial Metric Highlights -->
+      <div class="metrics-row">
+        <div class="metric-card">
+          <span class="metric-title">Total Balance</span>
+          <span class="metric-val num" id="metric-total-bal">$0.00</span>
+          <span class="metric-badge green">● Active Status</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-title">Total Inflow (Deposits)</span>
+          <span class="metric-val num" id="metric-inflow" style="color: var(--accent-primary);">$0.00</span>
+          <span class="metric-badge green">↑ Credits</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-title">Total Outflow (Debits)</span>
+          <span class="metric-val num" id="metric-outflow" style="color: var(--accent-rose);">$0.00</span>
+          <span class="metric-badge rose">↓ Withdrawals / Transfers</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-title">Recorded Transactions</span>
+          <span class="metric-val num" id="metric-tx-count">0</span>
+          <span class="metric-badge cyan">● Audit Logged</span>
+        </div>
+      </div>
+
+      <!-- Detailed Transaction History & Statement Log (User's Requested Priority) -->
+      <div class="section-panel">
+        <div class="table-controls">
+          <div>
+            <h2 class="panel-title" style="margin-bottom: 0.25rem;">Transaction History & Statements</h2>
+            <p style="font-size: 0.8rem; color: var(--text-secondary);">Complete chronological ledger with timestamps & running balance</p>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <div class="filter-tabs" role="tablist">
+              <button class="filter-btn active" data-filter="ALL">All</button>
+              <button class="filter-btn" data-filter="DEPOSIT">Deposits</button>
+              <button class="filter-btn" data-filter="WITHDRAWAL">Withdrawals</button>
+              <button class="filter-btn" data-filter="TRANSFER">Transfers</button>
+            </div>
+
+            <div class="search-box">
+              <input type="text" id="tx-search-input" class="form-control no-icon" placeholder="🔍 Search description or ID..." style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">
+            </div>
+
+            <button class="btn btn-secondary btn-sm" id="btn-download-csv" title="Export Statement to CSV">
+              📥 Export CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="modern-table" id="tx-table">
+            <thead>
+              <tr>
+                <th>Tx ID</th>
+                <th>Date & Time</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Balance After</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tx-table-body">
+              <tr>
+                <td colspan="7" class="empty-state">
+                  <div class="empty-state-icon">⏳</div>
+                  <p>Loading transactions from database...</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ==========================================
+       MODALS (<dialog> for native accessibility)
+       ========================================== -->
+
+  <!-- 1. DEPOSIT MODAL -->
+  <dialog class="fintech-modal" id="modal-deposit">
+    <div class="modal-header">
+      <h3 class="modal-title">Deposit Money</h3>
+      <button class="close-btn" data-close-modal="modal-deposit" aria-label="Close">✕</button>
+    </div>
+    <form id="form-deposit">
+      <div class="form-group">
+        <label class="form-label">Select Quick Amount</label>
+        <div class="quick-amounts">
+          <div class="amount-chip" data-quick-amount="100">$100</div>
+          <div class="amount-chip" data-quick-amount="500">$500</div>
+          <div class="amount-chip" data-quick-amount="1000">$1,000</div>
+          <div class="amount-chip" data-quick-amount="5000">$5,000</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="deposit-amount">Custom Amount ($)</label>
+        <input type="number" id="deposit-amount" class="form-control no-icon" placeholder="Enter amount" min="1" step="any" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="deposit-note">Note / Reference</label>
+        <input type="text" id="deposit-note" class="form-control no-icon" placeholder="e.g. Salary, Client payment, Savings">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Confirm Deposit</button>
+    </form>
+  </dialog>
+
+  <!-- 2. WITHDRAW MODAL -->
+  <dialog class="fintech-modal" id="modal-withdraw">
+    <div class="modal-header">
+      <h3 class="modal-title">Withdraw Cash</h3>
+      <button class="close-btn" data-close-modal="modal-withdraw" aria-label="Close">✕</button>
+    </div>
+    <form id="form-withdraw">
+      <div class="form-group">
+        <label class="form-label">Select Quick Amount</label>
+        <div class="quick-amounts">
+          <div class="amount-chip" data-quick-amount-w="100">$100</div>
+          <div class="amount-chip" data-quick-amount-w="300">$300</div>
+          <div class="amount-chip" data-quick-amount-w="500">$500</div>
+          <div class="amount-chip" data-quick-amount-w="1000">$1,000</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="withdraw-amount">Withdrawal Amount ($)</label>
+        <input type="number" id="withdraw-amount" class="form-control no-icon" placeholder="Enter amount" min="1" step="any" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="withdraw-pin">Confirm Your PIN</label>
+        <input type="password" id="withdraw-pin" class="form-control no-icon" placeholder="Enter security PIN" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="withdraw-note">Reason / Note</label>
+        <input type="text" id="withdraw-note" class="form-control no-icon" placeholder="e.g. ATM Cash, Personal expense">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Confirm Withdrawal</button>
+    </form>
+  </dialog>
+
+  <!-- 3. TRANSFER MODAL (Peer-to-Peer) -->
+  <dialog class="fintech-modal" id="modal-transfer">
+    <div class="modal-header">
+      <h3 class="modal-title">Transfer Funds</h3>
+      <button class="close-btn" data-close-modal="modal-transfer" aria-label="Close">✕</button>
+    </div>
+    <form id="form-transfer">
+      <div class="form-group">
+        <label class="form-label" for="transfer-to-acc">Recipient Account Number</label>
+        <input type="number" id="transfer-to-acc" class="form-control no-icon" placeholder="e.g. 210, 1572, 3045, 6448" required>
+        <span id="recipient-verify-badge" style="font-size: 0.75rem; margin-top: 0.3rem; display: block; color: var(--text-muted);">Enter account number</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="transfer-amount">Transfer Amount ($)</label>
+        <input type="number" id="transfer-amount" class="form-control no-icon" placeholder="Enter amount" min="1" step="any" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="transfer-pin">Your Security PIN</label>
+        <input type="password" id="transfer-pin" class="form-control no-icon" placeholder="Verify with PIN" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="transfer-note">Transfer Memo</label>
+        <input type="text" id="transfer-note" class="form-control no-icon" placeholder="e.g. Rent, Gift, Project split">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Send Transfer</button>
+    </form>
+  </dialog>
+
+  <!-- 4. FORGOT PIN / RECOVERY MODAL -->
+  <dialog class="fintech-modal" id="modal-forgot-pin">
+    <div class="modal-header">
+      <h3 class="modal-title">PIN Recovery</h3>
+      <button class="close-btn" data-close-modal="modal-forgot-pin" aria-label="Close">✕</button>
+    </div>
+
+    <!-- Step 1: Find Account -->
+    <div id="forgot-step-1">
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+        Enter your Account Number. We'll verify your identity with your registered security question.
+      </p>
+      <form id="form-forgot-step-1">
+        <div class="form-group">
+          <label class="form-label" for="forgot-acc">Your Account Number</label>
+          <input type="number" id="forgot-acc" class="form-control no-icon" placeholder="e.g. 210, 1572" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Find Account & Continue</button>
+      </form>
+    </div>
+
+    <!-- Step 2: Answer Question & Set New PIN -->
+    <div id="forgot-step-2" style="display: none;">
+      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        Account holder: <strong id="forgot-found-name" style="color: var(--accent-sky);">User</strong>
+      </p>
+      <form id="form-forgot-step-2">
+        <div class="form-group">
+          <label class="form-label">Security Question</label>
+          <div id="forgot-question-text" style="font-size: 0.9rem; font-weight: 600; padding: 0.6rem; background: rgba(255,255,255,0.05); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+            What is the name of your first pet?
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="forgot-answer">Your Security Answer</label>
+          <input type="text" id="forgot-answer" class="form-control no-icon" placeholder="Answer here" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="forgot-new-pin">Set New PIN (Numbers)</label>
+          <input type="number" id="forgot-new-pin" class="form-control no-icon" placeholder="e.g. 5678" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Verify & Reset PIN</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- 5. PROFILE & SETTINGS MODAL -->
+  <dialog class="fintech-modal" id="modal-profile">
+    <div class="modal-header">
+      <h3 class="modal-title">Profile & Security</h3>
+      <button class="close-btn" data-close-modal="modal-profile" aria-label="Close">✕</button>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem; background: rgba(255,255,255,0.03); border-radius: var(--radius-md); padding: 1rem; border: 1px solid var(--border-subtle);">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Account Number:</span>
+        <strong id="prof-acc" class="num">0000</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Account Type:</span>
+        <strong id="prof-type">Savings</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.4rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">MICR Code:</span>
+        <strong id="prof-micr" class="num">000</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Current PIN:</span>
+        <strong style="color: var(--accent-amber);" id="prof-pin-display">••••</strong>
+      </div>
+    </div>
+
+    <!-- Tabbed Profile Actions -->
+    <form id="form-update-profile">
+      <div class="form-group">
+        <label class="form-label" for="prof-mob">Mobile Number</label>
+        <input type="tel" id="prof-mob" class="form-control no-icon" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="prof-address">Address</label>
+        <input type="text" id="prof-address" class="form-control no-icon" required>
+      </div>
+      <button type="submit" class="btn btn-secondary btn-block" style="margin-bottom: 1.25rem;">Save Contact Details</button>
+    </form>
+
+    <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 1.25rem 0;">
+
+    <form id="form-change-pin">
+      <h4 style="font-size: 0.95rem; margin-bottom: 0.75rem;">Change PIN</h4>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="change-curr-pin">Current PIN</label>
+          <input type="password" id="change-curr-pin" class="form-control no-icon" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="change-new-pin">New PIN</label>
+          <input type="number" id="change-new-pin" class="form-control no-icon" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Update Security PIN</button>
+    </form>
+  </dialog>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- Client-side Logic -->
+  <script src="js/app.js"></script>
+</body>
+</html>
